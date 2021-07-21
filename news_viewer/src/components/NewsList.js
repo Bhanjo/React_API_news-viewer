@@ -18,14 +18,7 @@ const NewsListBlock = styled.div`
     }
 `;
 
-// const sampleArticle = {
-//     title: '제목',
-//     description: '내용',
-//     url: 'https://google.com',
-//     urlToImage: 'https://via.placeholder.com/160',
-// };
-
-const NewsList = () => {
+const NewsList = ({ category }) => {
     const [articles, setArticles] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -34,8 +27,10 @@ const NewsList = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
+                // 쿼리의 카테고리가 all이면 그대로, 아니면 `&category=카테고리`를 주소에 넣음
+                const query = category === 'all' ? '' : `&category=${category}`;
                 const response = await axios.get(
-                    'https://newsapi.org/v2/top-headlines?country=kr&category=technology&apiKey=c0662f2484fb4c458135523c837f41d5',
+                    `https://newsapi.org/v2/top-headlines?country=kr${query}&apiKey=c0662f2484fb4c458135523c837f41d5`,
                 );
                 setArticles(response.data.articles);
             } catch(e) {
@@ -44,7 +39,7 @@ const NewsList = () => {
             setLoading(false);
         };
         fetchData();
-    },[]);
+    },[category]); // 카테고리가 바뀔 때마다 뉴스를 새로 불러와야함
 
     // 대기 중일 때
     if(loading) {
